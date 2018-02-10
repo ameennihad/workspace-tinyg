@@ -896,16 +896,16 @@ cpdefine("inline:com-chilipeppr-workspace-tinyg", ["chilipeppr_ready"], function
                         chilipeppr.subscribe("/com-chilipeppr-elem-dragdrop/ondropped", this, this.onDropped, 8); // default is 10, we do 8 to be higher priority than Eagle BRD
                     },
                     
-                    supportedFiles: [
-                        {type: "eagle", ext:".brd", signature: ""},
-                        {type: "kiCad", ext:".kicad_pcb", signature: ""},],
+                    
+                    
+                    
+                    
+                    
                     onDropped: function(data, info) {
                         console.log("onDropped. len of file:", data.length, "info:", info);
                         // we have the data
                         // double check it's a board file, cuz it could be gcode
-                        var droppedFile = this.supportedFiles.find(function(f){
-                            return f.signature.test(data);
-                        });
+                        var droppedFile = "";
                         if (droppedFile !== undefined) {
     
                             console.log("we have a supported board file!");
@@ -927,10 +927,7 @@ cpdefine("inline:com-chilipeppr-workspace-tinyg", ["chilipeppr_ready"], function
                             */
                         }
                         else {
-                            droppedFile = this.supportedFiles.find(function(f){
-                                var extRegEx = new RegExp(f.ext + '$', 'i');
-                                if(info.name.match(extRegEx)) return f; else return null;
-                            });
+                            droppedFile = "";
                             console.log("droppedFile", droppedFile);
                             if (droppedFile !== undefined) {
                                 if(droppedFile.type == 'eagle')
