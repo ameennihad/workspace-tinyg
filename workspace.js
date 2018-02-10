@@ -11,7 +11,7 @@ cprequire_test(["inline:com-chilipeppr-workspace-tinyg"], function(ws) {
      */
     var loadFlashMsg = function() {
         chilipeppr.load("#com-chilipeppr-widget-flash-instance",
-            "http://fiddle.jshell.net/chilipeppr/90698kax/show/light/",
+            "http://raw.githubusercontent.com/chilipeppr/element-flash/master/auto-generated-widget.html",
             function() {
                 console.log("mycallback got called after loading flash msg module");
                 cprequire(["inline:com-chilipeppr-elem-flashmsg"], function(fm) {
@@ -27,7 +27,7 @@ cprequire_test(["inline:com-chilipeppr-workspace-tinyg"], function(ws) {
     ws.init();
 
     // Do some niceties for testing like margins on widget and title for browser
-    $('title').html("Tinyg Workspace Clone");
+    $('title').html("Tinyg Workspace");
     $('body').css('padding', '10px');
 
 } /*end_test*/ );
@@ -226,6 +226,40 @@ cpdefine("inline:com-chilipeppr-workspace-tinyg", ["chilipeppr_ready"], function
             // create a workspace object reference to this so inside the anonymous functions below
             // the workspace can be referred to
             var wsObj = this;
+            
+            // Load XBox Controller Widget
+            chilipeppr.load(
+              "#com-chilipeppr-ws-xbox",
+              "http://raw.githubusercontent.com/chilipeppr/widget-xbox/master/auto-generated-widget.html",
+              function() {
+                // Callback after widget loaded into #myDivWidgetXbox
+                // Now use require.js to get reference to instantiated widget
+                cprequire(
+                  ["inline:com-chilipeppr-widget-xbox"], // the id you gave your widget
+                  function(myObjWidgetXbox) {
+                    // Callback that is passed reference to the newly loaded widget
+                    console.log("Widget / Xbox just got loaded.", myObjWidgetXbox);
+                    myObjWidgetXbox.init();
+                    
+                    // setup toggle button
+                    var zwBtn = $('#com-chilipeppr-ws-menu .xbox-button');
+                    var zwDiv = $('#com-chilipeppr-ws-xbox');
+                    zwBtn.click(function() {
+                        if (zwDiv.hasClass("hidden")) {
+                            // unhide
+                            zwDiv.removeClass("hidden");
+                            zwBtn.addClass("active");
+                        }
+                        else {
+                            zwDiv.addClass("hidden");
+                            zwBtn.removeClass("active");
+                        }
+                        $(window).trigger('resize');
+                    });
+                  }
+                );
+              }
+            );
 
             this.font2gcodeObj = function() {
                 return {
@@ -618,6 +652,7 @@ cpdefine("inline:com-chilipeppr-workspace-tinyg", ["chilipeppr_ready"], function
             
             // Laser Solder
             // com-chilipeppr-ws-jscut
+            /*
             chilipeppr.load(
                 "#com-chilipeppr-ws-lasersolder",
                 "http://fiddle.jshell.net/chilipeppr/xuu785yz/show/light/",
@@ -645,7 +680,7 @@ cpdefine("inline:com-chilipeppr-workspace-tinyg", ["chilipeppr_ready"], function
                         });
                     });
                 }); //End Laser Solder
-                
+                */
 
             // Eagle BRD Import
             // com-chilipeppr-widget-eagle
@@ -693,7 +728,7 @@ cpdefine("inline:com-chilipeppr-workspace-tinyg", ["chilipeppr_ready"], function
                             chilipeppr.load(
                                 "#com-chilipeppr-ws-eagle",
                                 //"http://fiddle.jshell.net/chilipeppr/3fe23xsr/show/light/", 
-                                "http://raw.githubusercontent.com/ameennihad/widget-eagle/master/auto-generated-widget.html",
+                                "http://raw.githubusercontent.com/chilipeppr/widget-eagle/master/auto-generated-widget.html",
                                 function() {
                                     require(["inline:com-chilipeppr-widget-eagle"], function(eagle) {
                                         that.eagleInstance = eagle;
@@ -786,148 +821,6 @@ cpdefine("inline:com-chilipeppr-workspace-tinyg", ["chilipeppr_ready"], function
             this.eagleObj.init();
             //End Eagle Brd Import
 
-            // // PCB Import
-            // // com-chilipeppr-widget-pcb
-
-            // // Setup drag/drop for PCB files on our own because we don't
-            // // want to instantiate the PCB codebase (i.e. load its massive
-            // // javascript files) until the user try requests that we do
-            // this.pcbObj = function() { 
-            //     return {
-            //         pcbBtn: null,
-            //         pcbDiv: null,
-            //         pcbInstance: null,
-            //         init: function() {
-            //             this.pcbBtn = $('#com-chilipeppr-ws-menu .pcb-button');
-            //             this.pcbDiv = $('#com-chilipeppr-ws-pcb');
-            //             this.setupDragDrop();
-            //             this.setupBtn();
-            //             console.log("done instantiating micro PCB plug-in");
-            //         },
-            //         setupBtn: function() {
-            //             this.pcbBtn.click(this.togglePCB.bind(this));
-            //         },
-            //         togglePCB: function() {
-            //             console.log("togglePCB");
-            //             if (this.pcbDiv.hasClass("hidden")) {
-            //                 // unhide
-            //                 console.log("togglePCB - show");
-            //                 this.showPCB();
-            //             }
-            //             else {
-            //                 console.log("togglePCB - hide");
-            //                 this.hidePCB();
-            //             }
-            //         },
-            //         showPCB: function(callback) {
-            //             this.pcbDiv.removeClass("hidden");
-            //             this.pcbBtn.addClass("active");
-    
-            //             // see if instantiated already
-            //             // if so, just activate
-            //             if (this.pcbInstance != null) {
-            //                 console.log("showPCB - activateWidget");
-            //                 this.pcbInstance.activateWidget();
-            //                 if (callback) callback();
-            //             }
-            //             else {
-            //                 // otherwise, dynamic load
-            //                 console.log("showPCB - load");
-            //                 var that = this;
-            //                 chilipeppr.load(
-            //                     "#com-chilipeppr-ws-pcb",
-            //                     "http://raw.githubusercontent.com/ameennihad/widget-pcb/master/auto-generated-widget.html",
-            //                     function() {
-            //                         require(["inline:com-chilipeppr-widget-pcb"], function(pcb) {
-            //                             that.pcbInstance = pcb;
-            //                             console.log("PCB instantiated. pcbInstance:", that.pcbInstance);
-            //                             that.pcbInstance.init();
-            //                             //pcbInstance.activateWidget();
-            //                             if (callback) callback();
-            //                         });
-            //                     }
-            //                 );
-            //                 console.log("showPCB - load end", this.pcbInstance);
-            //             }
-            //             $(window).trigger('resize');
-            //         },
-            //         hidePCB: function() {
-            //             this.pcbDiv.addClass("hidden");
-            //             this.pcbBtn.removeClass("active");
-            //             if (this.pcbInstance != null) {
-            //                 this.pcbInstance.unactivateWidget();
-            //             }
-            //             $(window).trigger('resize');
-            //         },
-            //         setupDragDrop: function() {
-            //             // subscribe to events
-            //             chilipeppr.subscribe("/com-chilipeppr-elem-dragdrop/ondragover", this, this.onDragOver);
-            //             chilipeppr.subscribe("/com-chilipeppr-elem-dragdrop/ondragleave", this, this.onDragLeave);
-            //             // /com-chilipeppr-elem-dragdrop/ondropped
-            //             chilipeppr.subscribe("/com-chilipeppr-elem-dragdrop/ondropped", this, this.onDropped, 8); // default is 10, we do 8 to be higher priority than Eagle BRD
-            //         },
-            //         supportedFiles: [
-            //             {type: 'eagle', ext:".brd", signature: /<!DOCTYPE eagle SYSTEM "eagle.dtd">[\s\S]*<board>/im},
-            //             {type: 'kiCad', ext:".kicad_pcb", signature: /\(kicad_pcb \(version \d+\) \(host pcbnew/i}],
-            //         onDropped: function(data, info) {
-            //             console.log("onDropped. len of file:", data.length, "info:", info);
-            //             // we have the data
-            //             // double check it's a board file, cuz it could be gcode
-            //             var droppedFile = this.supportedFiles.find(function(f){
-            //                 return f.signature.test(data);
-            //             });
-            //             if (droppedFile !== undefined) {
-    
-            //                 console.log("we have a supported board file!");
-            //                 this.fileInfo = info;
-            //                 var that = this;
-            //                 this.showPCB(function() {
-            //                     console.log("got callback after showing PCB. now opening file.");
-            //                     that.pcbInstance.open(data, info);
-            //                 });
-            //                 console.log("opened brd file");
-
-            //                 // do NOT store a lastDropped, rather we should
-            //                 // get told from the workspace what the last file
-            //                 // was and if it was a BRD file we should auto-open
-            //                 /*
-            //                 localStorage.setItem('com-chilipeppr-widget-pcb-lastDropped', data);
-            //                 localStorage.setItem('com-chilipeppr-widget-pcb-lastDropped-info', JSON.stringify(info));
-            //                 console.log("saved brd file to localstorage");
-            //                 */
-            //             }
-            //             else {
-            //                 droppedFile = this.supportedFiles.find(function(f){
-            //                     var extRegEx = new RegExp(f.ext + '$', 'i');
-            //                     if(info.name.match(extRegEx)) return f; else return null;
-            //                 });
-            //                 console.log("droppedFile", droppedFile);
-            //                 if (droppedFile !== undefined) {
-            //                     if(droppedFile.type == 'eagle')
-            //                         chilipeppr.publish('/com-chilipeppr-elem-flashmsg/flashmsg', "Error Loading Eagle BRD File", "Looks like you dragged in an Eagle BRD file, but it seems to be in binary. You can open this file in Eagle and then re-save it to a new file to create a text version of your Eagle BRD file.", 15 * 1000);
-            //                     else if (droppedFile.type == 'kiCad')
-            //                         chilipeppr.publish('/com-chilipeppr-elem-flashmsg/flashmsg', "Error Loading KiCad File", "Looks like you dragged in a file with kicad_pcb extension, but it seems to be in unsupported format.", 15 * 1000);
-            //                     return false;
-            //                 }
-            //             }
-            //         },
-            //         onDragOver: function() {
-            //             console.log("onDragOver");
-            //             $('#com-chilipeppr-widget-pcb').addClass("panel-primary");
-            //             $('#com-chilipeppr-ws-menu .pcb-button').addClass("btn-primary");
-            //         },
-            //         onDragLeave: function() {
-            //             console.log("onDragLeave");
-            //             $('#com-chilipeppr-widget-pcb').removeClass("panel-primary");
-            //             $('#com-chilipeppr-ws-menu .pcb-button').removeClass("btn-primary");
-            //         },
-            //     }; 
-                
-            // }();
-            // this.pcbObj.init();
-            // console.log("pcbObj:", this.pcbObj);
-            // //End PCB Import
-            
             // GPIO
             // net-delarre-widget-gpio
 
@@ -1399,6 +1292,83 @@ cpdefine("inline:com-chilipeppr-workspace-tinyg", ["chilipeppr_ready"], function
                     });
                 }
             ); //End TinyG
+
+            // Cayenn Widget
+            chilipeppr.load(
+              "#com-chilipeppr-ws-cayenn",
+              "http://raw.githubusercontent.com/chilipeppr/widget-cayenn/master/auto-generated-widget.html",
+              function() {
+                // Callback after widget loaded into #myDivWidgetCayenn
+                // Now use require.js to get reference to instantiated widget
+                cprequire(
+                  ["inline:com-chilipeppr-widget-cayenn"], // the id you gave your widget
+                  function(myObjWidgetCayenn) {
+                    // Callback that is passed reference to the newly loaded widget
+                    console.log("Widget / Cayenn just got loaded.", myObjWidgetCayenn);
+                    myObjWidgetCayenn.init();
+                    
+                    // this widget has a lot of modals that pop up whenever, so we need to make sure the parent div is
+                    // not hidden. instead we'll hide the exact widget because the modals are outside the div of the widget
+                    $('#com-chilipeppr-ws-cayenn').removeClass("hidden");
+                    
+                    var btn = $('#com-chilipeppr-ws-menu .cayenn-button');
+                    var div = $('#com-chilipeppr-widget-cayenn');
+                    div.addClass("hidden");
+                    btn.click(function() {
+                        if (div.hasClass("hidden")) {
+                            // show widget
+                            div.removeClass("hidden");
+                            btn.addClass("active");
+                        } else {
+                            // hide widget
+                            div.addClass("hidden");
+                            btn.removeClass("active");
+                        }
+                        setTimeout(function() {
+                            $(window).trigger('resize');
+                        }, 200);
+                    });
+                    
+                  }
+                );
+              }
+            );
+            
+            // Frank Herrmann's Webcam Widget
+            chilipeppr.load(
+              "#com-chilipeppr-ws-webcam",
+              "http://raw.githubusercontent.com/xpix/widget-cam/master/auto-generated-widget.html",
+              function() {
+                // Callback after widget loaded into #myDivWidgetCam
+                // Now use require.js to get reference to instantiated widget
+                cprequire(
+                  ["inline:com-chilipeppr-widget-cam"], // the id you gave your widget
+                  function(myObjWidgetCam) {
+                    // Callback that is passed reference to the newly loaded widget
+                    console.log("Widget / Cam just got loaded.", myObjWidgetCam);
+                    myObjWidgetCam.init();
+                    
+                    var btn = $('#com-chilipeppr-ws-menu .webcam-button');
+                    var div = $('#com-chilipeppr-ws-webcam');
+                    div.addClass("hidden");
+                    btn.click(function() {
+                        if (div.hasClass("hidden")) {
+                            // show widget
+                            div.removeClass("hidden");
+                            btn.addClass("active");
+                        } else {
+                            // hide widget
+                            div.addClass("hidden");
+                            btn.removeClass("active");
+                        }
+                        setTimeout(function() {
+                            $(window).trigger('resize');
+                        }, 200);
+                    });
+                  }
+                );
+              }
+            );
 
             // WebRTC Client com-chilipeppr-webrtcclient
             /*

@@ -234,7 +234,7 @@ cprequire_test(["inline:com-chilipeppr-workspace-tinyg"], function(ws) {
      */
     var loadFlashMsg = function() {
         chilipeppr.load("#com-chilipeppr-widget-flash-instance",
-            "http://fiddle.jshell.net/chilipeppr/90698kax/show/light/",
+            "http://raw.githubusercontent.com/chilipeppr/element-flash/master/auto-generated-widget.html",
             function() {
                 console.log("mycallback got called after loading flash msg module");
                 cprequire(["inline:com-chilipeppr-elem-flashmsg"], function(fm) {
@@ -250,7 +250,7 @@ cprequire_test(["inline:com-chilipeppr-workspace-tinyg"], function(ws) {
     ws.init();
 
     // Do some niceties for testing like margins on widget and title for browser
-    $('title').html("Tinyg Workspace Clone");
+    $('title').html("Tinyg Workspace");
     $('body').css('padding', '10px');
 
 } /*end_test*/ );
@@ -449,6 +449,40 @@ cpdefine("inline:com-chilipeppr-workspace-tinyg", ["chilipeppr_ready"], function
             // create a workspace object reference to this so inside the anonymous functions below
             // the workspace can be referred to
             var wsObj = this;
+            
+            // Load XBox Controller Widget
+            chilipeppr.load(
+              "#com-chilipeppr-ws-xbox",
+              "http://raw.githubusercontent.com/chilipeppr/widget-xbox/master/auto-generated-widget.html",
+              function() {
+                // Callback after widget loaded into #myDivWidgetXbox
+                // Now use require.js to get reference to instantiated widget
+                cprequire(
+                  ["inline:com-chilipeppr-widget-xbox"], // the id you gave your widget
+                  function(myObjWidgetXbox) {
+                    // Callback that is passed reference to the newly loaded widget
+                    console.log("Widget / Xbox just got loaded.", myObjWidgetXbox);
+                    myObjWidgetXbox.init();
+                    
+                    // setup toggle button
+                    var zwBtn = $('#com-chilipeppr-ws-menu .xbox-button');
+                    var zwDiv = $('#com-chilipeppr-ws-xbox');
+                    zwBtn.click(function() {
+                        if (zwDiv.hasClass("hidden")) {
+                            // unhide
+                            zwDiv.removeClass("hidden");
+                            zwBtn.addClass("active");
+                        }
+                        else {
+                            zwDiv.addClass("hidden");
+                            zwBtn.removeClass("active");
+                        }
+                        $(window).trigger('resize');
+                    });
+                  }
+                );
+              }
+            );
 
             this.font2gcodeObj = function() {
                 return {
@@ -841,6 +875,7 @@ cpdefine("inline:com-chilipeppr-workspace-tinyg", ["chilipeppr_ready"], function
             
             // Laser Solder
             // com-chilipeppr-ws-jscut
+            /*
             chilipeppr.load(
                 "#com-chilipeppr-ws-lasersolder",
                 "http://fiddle.jshell.net/chilipeppr/xuu785yz/show/light/",
@@ -868,7 +903,7 @@ cpdefine("inline:com-chilipeppr-workspace-tinyg", ["chilipeppr_ready"], function
                         });
                     });
                 }); //End Laser Solder
-                
+                */
 
             // Eagle BRD Import
             // com-chilipeppr-widget-eagle
@@ -916,7 +951,7 @@ cpdefine("inline:com-chilipeppr-workspace-tinyg", ["chilipeppr_ready"], function
                             chilipeppr.load(
                                 "#com-chilipeppr-ws-eagle",
                                 //"http://fiddle.jshell.net/chilipeppr/3fe23xsr/show/light/", 
-                                "http://raw.githubusercontent.com/ameennihad/widget-eagle/master/auto-generated-widget.html",
+                                "http://raw.githubusercontent.com/chilipeppr/widget-eagle/master/auto-generated-widget.html",
                                 function() {
                                     require(["inline:com-chilipeppr-widget-eagle"], function(eagle) {
                                         that.eagleInstance = eagle;
@@ -1009,333 +1044,6 @@ cpdefine("inline:com-chilipeppr-workspace-tinyg", ["chilipeppr_ready"], function
             this.eagleObj.init();
             //End Eagle Brd Import
 
-            // // PCB Import
-            // // com-chilipeppr-widget-pcb
-
-            // // Setup drag/drop for PCB files on our own because we don't
-            // // want to instantiate the PCB codebase (i.e. load its massive
-            // // javascript files) until the user try requests that we do
-            // this.pcbObj = function() { 
-            //     return {
-            //         pcbBtn: null,
-            //         pcbDiv: null,
-            //         pcbInstance: null,
-            //         init: function() {
-            //             this.pcbBtn = $('#com-chilipeppr-ws-menu .pcb-button');
-            //             this.pcbDiv = $('#com-chilipeppr-ws-pcb');
-            //             this.setupDragDrop();
-            //             this.setupBtn();
-            //             console.log("done instantiating micro PCB plug-in");
-            //         },
-            //         setupBtn: function() {
-            //             this.pcbBtn.click(this.togglePCB.bind(this));
-            //         },
-            //         togglePCB: function() {
-            //             console.log("togglePCB");
-            //             if (this.pcbDiv.hasClass("hidden")) {
-            //                 // unhide
-            //                 console.log("togglePCB - show");
-            //                 this.showPCB();
-            //             }
-            //             else {
-            //                 console.log("togglePCB - hide");
-            //                 this.hidePCB();
-            //             }
-            //         },
-            //         showPCB: function(callback) {
-            //             this.pcbDiv.removeClass("hidden");
-            //             this.pcbBtn.addClass("active");
-    
-            //             // see if instantiated already
-            //             // if so, just activate
-            //             if (this.pcbInstance != null) {
-            //                 console.log("showPCB - activateWidget");
-            //                 this.pcbInstance.activateWidget();
-            //                 if (callback) callback();
-            //             }
-            //             else {
-            //                 // otherwise, dynamic load
-            //                 console.log("showPCB - load");
-            //                 var that = this;
-            //                 chilipeppr.load(
-            //                     "#com-chilipeppr-ws-pcb",
-            //                     "http://raw.githubusercontent.com/ameennihad/widget-pcb/master/auto-generated-widget.html",
-            //                     function() {
-            //                         require(["inline:com-chilipeppr-widget-pcb"], function(pcb) {
-            //                             that.pcbInstance = pcb;
-            //                             console.log("PCB instantiated. pcbInstance:", that.pcbInstance);
-            //                             that.pcbInstance.init();
-            //                             //pcbInstance.activateWidget();
-            //                             if (callback) callback();
-            //                         });
-            //                     }
-            //                 );
-            //                 console.log("showPCB - load end", this.pcbInstance);
-            //             }
-            //             $(window).trigger('resize');
-            //         },
-            //         hidePCB: function() {
-            //             this.pcbDiv.addClass("hidden");
-            //             this.pcbBtn.removeClass("active");
-            //             if (this.pcbInstance != null) {
-            //                 this.pcbInstance.unactivateWidget();
-            //             }
-            //             $(window).trigger('resize');
-            //         },
-            //         setupDragDrop: function() {
-            //             // subscribe to events
-            //             chilipeppr.subscribe("/com-chilipeppr-elem-dragdrop/ondragover", this, this.onDragOver);
-            //             chilipeppr.subscribe("/com-chilipeppr-elem-dragdrop/ondragleave", this, this.onDragLeave);
-            //             // /com-chilipeppr-elem-dragdrop/ondropped
-            //             chilipeppr.subscribe("/com-chilipeppr-elem-dragdrop/ondropped", this, this.onDropped, 8); // default is 10, we do 8 to be higher priority than Eagle BRD
-            //         },
-            //         supportedFiles: [
-            //             {type: 'eagle', ext:".brd", signature: /<!DOCTYPE eagle SYSTEM "eagle.dtd">[\s\S]*<board>/im},
-            //             {type: 'kiCad', ext:".kicad_pcb", signature: /\(kicad_pcb \(version \d+\) \(host pcbnew/i}],
-            //         onDropped: function(data, info) {
-            //             console.log("onDropped. len of file:", data.length, "info:", info);
-            //             // we have the data
-            //             // double check it's a board file, cuz it could be gcode
-            //             var droppedFile = this.supportedFiles.find(function(f){
-            //                 return f.signature.test(data);
-            //             });
-            //             if (droppedFile !== undefined) {
-    
-            //                 console.log("we have a supported board file!");
-            //                 this.fileInfo = info;
-            //                 var that = this;
-            //                 this.showPCB(function() {
-            //                     console.log("got callback after showing PCB. now opening file.");
-            //                     that.pcbInstance.open(data, info);
-            //                 });
-            //                 console.log("opened brd file");
-
-            //                 // do NOT store a lastDropped, rather we should
-            //                 // get told from the workspace what the last file
-            //                 // was and if it was a BRD file we should auto-open
-            //                 /*
-            //                 localStorage.setItem('com-chilipeppr-widget-pcb-lastDropped', data);
-            //                 localStorage.setItem('com-chilipeppr-widget-pcb-lastDropped-info', JSON.stringify(info));
-            //                 console.log("saved brd file to localstorage");
-            //                 */
-            //             }
-            //             else {
-            //                 droppedFile = this.supportedFiles.find(function(f){
-            //                     var extRegEx = new RegExp(f.ext + '
-
-</head>
-
-<body>
-
-    <div id="com-chilipeppr-widget-flash-instance"></div>
-    <!--not sure which version to keep-->
-
-    <div id="com-chilipeppr-workspace-tinyg" class="xhidden">
-        <div id="com-chilipeppr-ws-gcode-wrapper" class="dropArea">
-            <div id="com-chilipeppr-ws-gcode-dragdropoverlay" class="hidden">
-                <div class="well">Drag and Drop Gcode Files Onto Browser Window</div>
-            </div>
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-xs-3 widgetx padrt">
-                        <!-- 3D Viewer. Must be loaded at top to get z-orders correct -->
-                        <div id="com-chilipeppr-3dviewer">Load 3D Viewport Here</div>
-                        <!-- Workspace Hdr -->
-                        <div id="com-chilipeppr-ws-gcode-hdr" class="com-chilipeppr-ws-hdr zhigh well">
-                            
-                            <span class="workspace-title">Workspace TinyG Ameen</span>
-                            
-                            <div id="com-chilipeppr-ws-menu" class="">
-                                
-                                <div class="pull-right">
-                                    <div class="dropdown">
-                                        <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
-                                        <ul class="dropdown-menu dropdown-menu-ws" role="menu">
-                                            <li class="com-chilipeppr-ws-menu-billboard" style="width:350px;">
-                                                <!-- Billboard -->
-                                                <div class="com-chilipeppr-ws-billboard">
-                                                </div>
-                                                <!-- End Billboard -->
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-
-                                <div id="com-chilipeppr-ws-gcode-dragdrop" xstyle="margin-right:6px;" class="pull-left"></div>
-                                
-                                <div class="dropdown pull-left">
-                                  <button class="btn btn-xs btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                    Widgets
-                                    <span class="caret"></span>
-                                  </button>
-                                  <ul class="dropdown-menu workspace-dropdown" aria-labelledby="dropdownMenu1">
-                                    <!--<li><a href="#">Action</a></li>-->
-                                    <!--<li><a href="#">Another action</a></li>-->
-                                    <!--<li><a href="#">Something else here</a></li>-->
-                                    <!--<li role="separator" class="divider"></li>-->
-                                    <!--<li><a href="#">Separated link</a></li>-->
-                                    
-                                    <li><button type="button" class="btn-ws btn btn-xs btn-default zipwhip-button" data-container="body" data-toggle="popover" data-placement="auto" data-content="Get a text sent to you when your CNC job is completed." data-trigger="hover" data-delay="100"><span class="zipwhip"></span>Send Text on Job Done</button></li>
-                                    <li><button type="button" class="btn-ws btn btn-xs btn-default zipwhip-recvtext-button" data-container="body" data-toggle="popover" data-placement="auto" data-content="Login to Zipwhip to receive texts and start a CNC job when the text is received." data-trigger="hover" data-delay="100"><span class="zipwhip"></span>Recv Text to Trigger</button></li>
-                                    <li><button type="button" class="btn-ws btn btn-xs btn-default autolevel-button" data-container="body" data-toggle="popover" data-placement="auto" data-content="Allows you to auto-level your PCB before milling. Most raw PCB boards have a slight warpage. This widget lets you probe the warpage and then it auto-scales your Gcode to match the warpage so you get very clean/predictable z-positions in your milling job."
-                                    data-trigger="hover" data-delay="100">Auto-Level</button></li>
-                                    <li><button type="button" class="btn-ws btn btn-xs btn-default macro-button" data-container="body" data-toggle="popover" data-placement="auto" data-content="Run a macro." data-trigger="hover" data-delay="100">Macro</button></li>
-                                    <li><button type="button" class="btn-ws btn btn-xs btn-default jscut-button" data-container="body" data-toggle="popover" data-placement="auto" data-content="Load file from JSCut" data-trigger="hover" data-delay="100">JScut</button></li>
-                                    <!--<li><button type="button" class="btn-ws btn btn-xs btn-default lasersolder-button" data-container="body" data-toggle="popover" data-placement="auto" data-content="Laser Solderer" data-trigger="hover" data-delay="100">Laser Solder</button></li>-->
-                                    <li><button type="button" class="btn-ws btn btn-xs btn-default eagle-button" data-container="body" data-toggle="popover" data-placement="auto" xdata-content="Laser Solderer" data-trigger="hover" data-delay="100">Eagle BRD Import</button></li>
-                                    <!--<li><button type="button" class="btn-ws btn btn-xs btn-default pcb-button" data-container="body" data-toggle="popover" data-placement="auto" xdata-content="Laser Solderer" data-trigger="hover" data-delay="100">PCB Import</button></li>-->
-                                    <li><button type="button" class="btn-ws btn btn-xs btn-default gpio-button" data-container="body" data-toggle="popover" data-placement="auto" data-content="GPIO Server by Ben Delarre. Allows you to control your GPIO ports on a Raspberry Pi or Beagle Bone Black to toggle on/off hardware components. For example, you could toggle a fan on/off via GPIO."
-                                    data-trigger="hover" data-delay="100">GPIO</button></li>
-                                    <li><button type="button" class="btn-ws btn btn-xs btn-default shuttlexpress-button" data-container="body" data-toggle="popover" data-placement="auto" data-content="ShuttleXpress Jog Dial." data-trigger="hover" data-delay="100">ShuttleXpress</button></li>
-    
-                                    <li><button type="button" class="btn-ws btn btn-xs btn-default touchplate-button" data-container="body" data-toggle="popover" data-placement="auto" data-content="Use a touch plate to easily figure out your Z zero of your workpiece and set it." data-trigger="hover"
-                                    data-delay="100">Touch Plate</button></li>
-                                    <li><button type="button" class="btn-ws btn btn-xs btn-default superTouchplate-button" data-container="body" data-toggle="popover" data-placement="auto" data-content="XYZ touch plate. Use a touch plate to figure out your X zero, Y zero, and Z zero of your workpiece." data-trigger="hover"
-                                    data-delay="100">Super Touch Plate</button></li>
-    
-                                    <li><button type="button" class="btn-ws btn btn-xs btn-default programmer-button" data-container="body" data-toggle="popover" data-placement="auto" data-content="Program your Arduino or Atmel chip directly from ChiliPeppr." data-trigger="hover" data-delay="100">Arduino / Atmel Firmware Uploader</button></li>
-                                    <li><button type="button" class="btn-ws btn btn-xs btn-default svg2gcode-button" data-container="body" data-toggle="popover" data-placement="auto" data-content="Import an SVG file to Gcode" data-trigger="hover" data-delay="100">SVG Import</button></li>
-                                    <li><button type="button" class="btn-ws btn btn-xs btn-default font2gcode-button" data-container="body" data-toggle="popover" data-placement="auto" data-content="Create Gcode from text" data-trigger="hover" data-delay="100">Font2Gcode</button></li>
-                                
-                                    
-                                  </ul>
-                                </div>
-                                
-                            </div>
-
-                        </div>
-                        <!-- SVG2Gcode -->
-                        <div class="zhigh hidden" id="com-chilipeppr-ws-svg2gcode"></div>
-
-                        <!-- Font2Gcode -->
-                        <div class="zhigh hidden" id="com-chilipeppr-ws-font2gcode"></div>
-                        
-                        <!-- Zipwhip Text Messaging -->
-                        <div class="zhigh hidden" id="com-chilipeppr-ws-zipwhip"></div>
-                        
-                        <!-- Zipwhip Text Messaging Receive Text widget -->
-                        <div class="zhigh hidden" id="com-chilipeppr-ws-zipwhip-recvtext"></div>
-
-                        <!-- Auto Leveller -->
-                        <div class="zhigh hidden" id="com-chilipeppr-ws-autolevel">Auto-Level Here</div>
-
-                        <!-- Macro -->
-                        <div class="zhigh hidden" id="com-chilipeppr-ws-macro">Macro Here</div>
-
-                        <!-- JScut -->
-                        <div class="zhigh hidden" id="com-chilipeppr-ws-jscut">Jscut Here</div>
-
-                        <!-- Laser Solder -->
-                        <div class="zhigh hidden" id="com-chilipeppr-ws-lasersolder">Laser Solderer Here</div>
-
-                        <!-- Eagle BRD -->
-                        <div class="zhigh hidden" id="com-chilipeppr-ws-eagle">Eagle BRD Here</div>
-
-                        <!-- PCB -->
-                        <!--<div class="zhigh hidden" id="com-chilipeppr-ws-pcb">PCB Here</div>-->
-                        
-                        <!-- GPIO -->
-                        <div class="zhigh hidden" id="com-chilipeppr-ws-gpio">GPIO Here</div>
-
-                        <!-- shuttlexpress -->
-                        <div class="zhigh hidden" id="com-chilipeppr-ws-shuttlexpress">ShuttleXpress Here</div>
-
-                        <!-- Touch Plate -->
-                        <div class="zhigh hidden" id="com-chilipeppr-ws-touchplate">Touch Plate Here</div>
-                        
-                        <!-- Super Touch Plate -->
-                        <div class="zhigh hidden" id="com-chilipeppr-ws-superTouchplate">Super Touch Plate Here</div>
-
-                        <!-- Arduino / Atmel Firmware Programmer -->
-                        <div class="zhigh xhidden" id="com-chilipeppr-ws-programmer">Arduino / Atmel Firmware Programmer Here</div>
-
-                        <!-- Gcode List -->
-                        <div id="com-chilipeppr-gcode-list" class="zhigh">Load Gcode List Here</div>
-                        <!-- Serial In/Out Text Log-->
-                        <div id="com-chilipeppr-widget-console-instance" class="zhigh">Load Serial Port Console Here</div>
-                    </div>
-                    <!-- 3D Viewer -->
-                    <div class="widget col-xs-6">
-                        <div class="">
-                            <table><tr><td>
-                                <div id="com-chilipeppr-3dviewer-controlpanel" style=""></div>
-                            </td></tr>
-                            <tr><td>
-                                <div id="com-chilipeppr-ws-rpmsensor" style="padding: 10px 10px;" class="hidden"></div>
-                            </td></tr>
-                            </table>
-                        </div>
-                        
-                    </div>
-                    <div class="col-xs-3 nopadding">
-                        <!-- XYZ -->
-                        <div id="com-chilipeppr-xyz" class="">Load XYZ Here</div>
-                        <!-- Tinyg -->
-                        <div id="com-chilipeppr-tinyg" class="">Load TinyG Here</div>
-                        <!-- WebRTC Client -->
-                        <div id="com-chilipeppr-webrtcclient" class="hidden">Load WebRTC Client Here</div>
-                        <!-- Serial Port Selector -->
-                        <div id="com-chilipeppr-widget-spjs-instance" class="">Load Serial Port Selector Here</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Keep this div hidden so it can be cloned and used by the Javascript -->
-    <div id="com-chilipeppr-workspace-tinyg-billboard" class="hidden">
-        <div class="billboard-content">
-            <h4 class="billboard-title" style="">TinyG Workspace</h4>
-
-            <p class="billboard-url" style=""><a href="http://chilipeppr.com/tinyg">chilipeppr.com/tinyg</a>
-
-            </p>
-            <div class="billboard-imgcontain" style="">
-                <a href="http://chilipeppr.com/tinyg">
-                    <div class="billboard-img" style="background-image: url('https://i2dcui.appspot.com/img/tinyg.jpg')" />
-                </a>
-                <div class="billboard-stats2">
-                </div>
-
-            </div>
-            <p class="billboard-desc">
-                A ChiliPeppr Workspace for TinyG CNC controllers.
-            </p>
-        </div>
-    </div>
-
-</body>
-
-</html>, 'i');
-            //                     if(info.name.match(extRegEx)) return f; else return null;
-            //                 });
-            //                 console.log("droppedFile", droppedFile);
-            //                 if (droppedFile !== undefined) {
-            //                     if(droppedFile.type == 'eagle')
-            //                         chilipeppr.publish('/com-chilipeppr-elem-flashmsg/flashmsg', "Error Loading Eagle BRD File", "Looks like you dragged in an Eagle BRD file, but it seems to be in binary. You can open this file in Eagle and then re-save it to a new file to create a text version of your Eagle BRD file.", 15 * 1000);
-            //                     else if (droppedFile.type == 'kiCad')
-            //                         chilipeppr.publish('/com-chilipeppr-elem-flashmsg/flashmsg', "Error Loading KiCad File", "Looks like you dragged in a file with kicad_pcb extension, but it seems to be in unsupported format.", 15 * 1000);
-            //                     return false;
-            //                 }
-            //             }
-            //         },
-            //         onDragOver: function() {
-            //             console.log("onDragOver");
-            //             $('#com-chilipeppr-widget-pcb').addClass("panel-primary");
-            //             $('#com-chilipeppr-ws-menu .pcb-button').addClass("btn-primary");
-            //         },
-            //         onDragLeave: function() {
-            //             console.log("onDragLeave");
-            //             $('#com-chilipeppr-widget-pcb').removeClass("panel-primary");
-            //             $('#com-chilipeppr-ws-menu .pcb-button').removeClass("btn-primary");
-            //         },
-            //     }; 
-                
-            // }();
-            // this.pcbObj.init();
-            // console.log("pcbObj:", this.pcbObj);
-            // //End PCB Import
-            
             // GPIO
             // net-delarre-widget-gpio
 
@@ -1808,6 +1516,83 @@ cpdefine("inline:com-chilipeppr-workspace-tinyg", ["chilipeppr_ready"], function
                 }
             ); //End TinyG
 
+            // Cayenn Widget
+            chilipeppr.load(
+              "#com-chilipeppr-ws-cayenn",
+              "http://raw.githubusercontent.com/chilipeppr/widget-cayenn/master/auto-generated-widget.html",
+              function() {
+                // Callback after widget loaded into #myDivWidgetCayenn
+                // Now use require.js to get reference to instantiated widget
+                cprequire(
+                  ["inline:com-chilipeppr-widget-cayenn"], // the id you gave your widget
+                  function(myObjWidgetCayenn) {
+                    // Callback that is passed reference to the newly loaded widget
+                    console.log("Widget / Cayenn just got loaded.", myObjWidgetCayenn);
+                    myObjWidgetCayenn.init();
+                    
+                    // this widget has a lot of modals that pop up whenever, so we need to make sure the parent div is
+                    // not hidden. instead we'll hide the exact widget because the modals are outside the div of the widget
+                    $('#com-chilipeppr-ws-cayenn').removeClass("hidden");
+                    
+                    var btn = $('#com-chilipeppr-ws-menu .cayenn-button');
+                    var div = $('#com-chilipeppr-widget-cayenn');
+                    div.addClass("hidden");
+                    btn.click(function() {
+                        if (div.hasClass("hidden")) {
+                            // show widget
+                            div.removeClass("hidden");
+                            btn.addClass("active");
+                        } else {
+                            // hide widget
+                            div.addClass("hidden");
+                            btn.removeClass("active");
+                        }
+                        setTimeout(function() {
+                            $(window).trigger('resize');
+                        }, 200);
+                    });
+                    
+                  }
+                );
+              }
+            );
+            
+            // Frank Herrmann's Webcam Widget
+            chilipeppr.load(
+              "#com-chilipeppr-ws-webcam",
+              "http://raw.githubusercontent.com/xpix/widget-cam/master/auto-generated-widget.html",
+              function() {
+                // Callback after widget loaded into #myDivWidgetCam
+                // Now use require.js to get reference to instantiated widget
+                cprequire(
+                  ["inline:com-chilipeppr-widget-cam"], // the id you gave your widget
+                  function(myObjWidgetCam) {
+                    // Callback that is passed reference to the newly loaded widget
+                    console.log("Widget / Cam just got loaded.", myObjWidgetCam);
+                    myObjWidgetCam.init();
+                    
+                    var btn = $('#com-chilipeppr-ws-menu .webcam-button');
+                    var div = $('#com-chilipeppr-ws-webcam');
+                    div.addClass("hidden");
+                    btn.click(function() {
+                        if (div.hasClass("hidden")) {
+                            // show widget
+                            div.removeClass("hidden");
+                            btn.addClass("active");
+                        } else {
+                            // hide widget
+                            div.addClass("hidden");
+                            btn.removeClass("active");
+                        }
+                        setTimeout(function() {
+                            $(window).trigger('resize');
+                        }, 200);
+                    });
+                  }
+                );
+              }
+            );
+
             // WebRTC Client com-chilipeppr-webrtcclient
             /*
             chilipeppr.load(
@@ -1873,7 +1658,7 @@ cpdefine("inline:com-chilipeppr-workspace-tinyg", ["chilipeppr_ready"], function
                         <!-- Workspace Hdr -->
                         <div id="com-chilipeppr-ws-gcode-hdr" class="com-chilipeppr-ws-hdr zhigh well">
                             
-                            <span class="workspace-title">Workspace TinyG Ameen</span>
+                            <span class="workspace-title">Workspace TinyG</span>
                             
                             <div id="com-chilipeppr-ws-menu" class="">
                                 
@@ -1905,6 +1690,8 @@ cpdefine("inline:com-chilipeppr-workspace-tinyg", ["chilipeppr_ready"], function
                                     <!--<li role="separator" class="divider"></li>-->
                                     <!--<li><a href="#">Separated link</a></li>-->
                                     
+                                    <li><button type="button" class="btn-ws btn btn-xs btn-default xbox-button" data-container="body" data-toggle="popover" data-placement="auto" data-content="Use your Xbox Controller with ChiliPeppr." data-trigger="hover" data-delay="100"><span class=""></span>Xbox Controller</button></li>
+                                    <li><button type="button" class="btn-ws btn btn-xs btn-default webcam-button" data-container="body" data-toggle="popover" data-placement="auto" data-content="Stream your MJPEG webcam" data-trigger="hover" data-delay="100"><span class=""></span>Webcam</button></li>
                                     <li><button type="button" class="btn-ws btn btn-xs btn-default zipwhip-button" data-container="body" data-toggle="popover" data-placement="auto" data-content="Get a text sent to you when your CNC job is completed." data-trigger="hover" data-delay="100"><span class="zipwhip"></span>Send Text on Job Done</button></li>
                                     <li><button type="button" class="btn-ws btn btn-xs btn-default zipwhip-recvtext-button" data-container="body" data-toggle="popover" data-placement="auto" data-content="Login to Zipwhip to receive texts and start a CNC job when the text is received." data-trigger="hover" data-delay="100"><span class="zipwhip"></span>Recv Text to Trigger</button></li>
                                     <li><button type="button" class="btn-ws btn btn-xs btn-default autolevel-button" data-container="body" data-toggle="popover" data-placement="auto" data-content="Allows you to auto-level your PCB before milling. Most raw PCB boards have a slight warpage. This widget lets you probe the warpage and then it auto-scales your Gcode to match the warpage so you get very clean/predictable z-positions in your milling job."
@@ -1913,7 +1700,6 @@ cpdefine("inline:com-chilipeppr-workspace-tinyg", ["chilipeppr_ready"], function
                                     <li><button type="button" class="btn-ws btn btn-xs btn-default jscut-button" data-container="body" data-toggle="popover" data-placement="auto" data-content="Load file from JSCut" data-trigger="hover" data-delay="100">JScut</button></li>
                                     <!--<li><button type="button" class="btn-ws btn btn-xs btn-default lasersolder-button" data-container="body" data-toggle="popover" data-placement="auto" data-content="Laser Solderer" data-trigger="hover" data-delay="100">Laser Solder</button></li>-->
                                     <li><button type="button" class="btn-ws btn btn-xs btn-default eagle-button" data-container="body" data-toggle="popover" data-placement="auto" xdata-content="Laser Solderer" data-trigger="hover" data-delay="100">Eagle BRD Import</button></li>
-                                    <!--<li><button type="button" class="btn-ws btn btn-xs btn-default pcb-button" data-container="body" data-toggle="popover" data-placement="auto" xdata-content="Laser Solderer" data-trigger="hover" data-delay="100">PCB Import</button></li>-->
                                     <li><button type="button" class="btn-ws btn btn-xs btn-default gpio-button" data-container="body" data-toggle="popover" data-placement="auto" data-content="GPIO Server by Ben Delarre. Allows you to control your GPIO ports on a Raspberry Pi or Beagle Bone Black to toggle on/off hardware components. For example, you could toggle a fan on/off via GPIO."
                                     data-trigger="hover" data-delay="100">GPIO</button></li>
                                     <li><button type="button" class="btn-ws btn btn-xs btn-default shuttlexpress-button" data-container="body" data-toggle="popover" data-placement="auto" data-content="ShuttleXpress Jog Dial." data-trigger="hover" data-delay="100">ShuttleXpress</button></li>
@@ -1927,13 +1713,21 @@ cpdefine("inline:com-chilipeppr-workspace-tinyg", ["chilipeppr_ready"], function
                                     <li><button type="button" class="btn-ws btn btn-xs btn-default svg2gcode-button" data-container="body" data-toggle="popover" data-placement="auto" data-content="Import an SVG file to Gcode" data-trigger="hover" data-delay="100">SVG Import</button></li>
                                     <li><button type="button" class="btn-ws btn btn-xs btn-default font2gcode-button" data-container="body" data-toggle="popover" data-placement="auto" data-content="Create Gcode from text" data-trigger="hover" data-delay="100">Font2Gcode</button></li>
                                 
-                                    
+                                    <li><button type="button" class="btn-ws btn btn-xs btn-default cayenn-button" data-container="body" data-toggle="popover" data-placement="auto" data-content="View your Cayenn devices" data-trigger="hover" data-delay="100">Cayenn Devices</button></li>
+                                
                                   </ul>
                                 </div>
                                 
                             </div>
 
                         </div>
+                        
+                        <!-- Xbox -->
+                        <div class="zhigh hidden" id="com-chilipeppr-ws-xbox"></div>
+
+                        <!-- Cayenn -->
+                        <div class="zhigh hidden" id="com-chilipeppr-ws-cayenn"></div>
+                        
                         <!-- SVG2Gcode -->
                         <div class="zhigh hidden" id="com-chilipeppr-ws-svg2gcode"></div>
 
@@ -1961,9 +1755,6 @@ cpdefine("inline:com-chilipeppr-workspace-tinyg", ["chilipeppr_ready"], function
                         <!-- Eagle BRD -->
                         <div class="zhigh hidden" id="com-chilipeppr-ws-eagle">Eagle BRD Here</div>
 
-                        <!-- PCB -->
-                        <!--<div class="zhigh hidden" id="com-chilipeppr-ws-pcb">PCB Here</div>-->
-                        
                         <!-- GPIO -->
                         <div class="zhigh hidden" id="com-chilipeppr-ws-gpio">GPIO Here</div>
 
@@ -2002,6 +1793,8 @@ cpdefine("inline:com-chilipeppr-workspace-tinyg", ["chilipeppr_ready"], function
                         <div id="com-chilipeppr-xyz" class="">Load XYZ Here</div>
                         <!-- Tinyg -->
                         <div id="com-chilipeppr-tinyg" class="">Load TinyG Here</div>
+                        <!-- Xbox -->
+                        <div class="hidden" id="com-chilipeppr-ws-webcam"></div>
                         <!-- WebRTC Client -->
                         <div id="com-chilipeppr-webrtcclient" class="hidden">Load WebRTC Client Here</div>
                         <!-- Serial Port Selector -->
