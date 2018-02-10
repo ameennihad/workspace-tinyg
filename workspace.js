@@ -693,7 +693,7 @@ cpdefine("inline:com-chilipeppr-workspace-tinyg", ["chilipeppr_ready"], function
                             chilipeppr.load(
                                 "#com-chilipeppr-ws-eagle",
                                 //"http://fiddle.jshell.net/chilipeppr/3fe23xsr/show/light/", 
-                                "http://raw.githubusercontent.com/ameennihad/widget-pcb/master/auto-generated-widget.html",
+                                "http://raw.githubusercontent.com/ameennihad/widget-eagle/master/auto-generated-widget.html",
                                 function() {
                                     require(["inline:com-chilipeppr-widget-eagle"], function(eagle) {
                                         that.eagleInstance = eagle;
@@ -786,6 +786,8 @@ cpdefine("inline:com-chilipeppr-workspace-tinyg", ["chilipeppr_ready"], function
             this.eagleObj.init();
             //End Eagle Brd Import
 
+
+            
             // GPIO
             // net-delarre-widget-gpio
 
