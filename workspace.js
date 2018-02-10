@@ -866,7 +866,7 @@ cpdefine("inline:com-chilipeppr-workspace-tinyg", ["chilipeppr_ready"], function
                             var that = this;
                             chilipeppr.load(
                                 "#com-chilipeppr-ws-pcb",
-                                "http://raw.githubusercontent.com/chilipeppr/widget-eagle/master/auto-generated-widget.html",
+                                "http://raw.githubusercontent.com/ameennihad/widget-pcb/master/auto-generated-widget.html",
                                 function() {
                                     require(["inline:com-chilipeppr-widget-pcb"], function(pcb) {
                                         that.pcbInstance = pcb;
