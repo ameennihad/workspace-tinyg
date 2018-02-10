@@ -728,7 +728,7 @@ cpdefine("inline:com-chilipeppr-workspace-tinyg", ["chilipeppr_ready"], function
                             chilipeppr.load(
                                 "#com-chilipeppr-ws-eagle",
                                 //"http://fiddle.jshell.net/chilipeppr/3fe23xsr/show/light/", 
-                                "http://raw.githubusercontent.com/ameennihad/widget-pcb/master/auto-generated-widget.html",
+                                "http://raw.githubusercontent.com/ameennihad/widget-eagle/master/auto-generated-widget.html",
                                 function() {
                                     require(["inline:com-chilipeppr-widget-eagle"], function(eagle) {
                                         that.eagleInstance = eagle;
@@ -820,6 +820,142 @@ cpdefine("inline:com-chilipeppr-workspace-tinyg", ["chilipeppr_ready"], function
             console.log("eagleObj:", this.eagleObj);
             this.eagleObj.init();
             //End Eagle Brd Import
+
+            // PCB Import
+            // com-chilipeppr-widget-pcb
+
+            // Setup drag/drop for PCB files on our own because we don't
+            // want to instantiate the PCB codebase (i.e. load its massive
+            // javascript files) until the user try requests that we do
+            this.pcbObj = function() { 
+                return {
+                    pcbBtn: null,
+                    pcbDiv: null,
+                    pcbInstance: null,
+                    init: function() {
+                        this.pcbBtn = $('#com-chilipeppr-ws-menu .pcb-button');
+                        this.pcbDiv = $('#com-chilipeppr-ws-pcb');
+                        this.setupDragDrop();
+                        this.setupBtn();
+                        console.log("done instantiating micro PCB plug-in");
+                    },
+                    setupBtn: function() {
+                        this.pcbBtn.click(this.togglePCB.bind(this));
+                    },
+                    togglePCB: function() {
+                        if (this.pcbDiv.hasClass("hidden")) {
+                            // unhide
+                            this.showPCB();
+                        }
+                        else {
+                            this.hidePCB();
+                        }
+                    },
+                    showPCB: function(callback) {
+                        this.pcbDiv.removeClass("hidden");
+                        this.pcbBtn.addClass("active");
+    
+                        // see if instantiated already
+                        // if so, just activate
+                        if (this.pcbInstance != null) {
+                            this.pcbInstance.activateWidget();
+                            if (callback) callback();
+                        }
+                        else {
+                            // otherwise, dynamic load
+                            var that = this;
+                            chilipeppr.load(
+                                "#com-chilipeppr-ws-pcb",
+                                "http://raw.githubusercontent.com/ameennihad/widget-pcb/master/auto-generated-widget.html",
+                                function() {
+                                    require(["inline:com-chilipeppr-widget-pcb"], function(pcb) {
+                                        that.pcbInstance = pcb;
+                                        console.log("PCB instantiated. pcbInstance:", that.pcbInstance);
+                                        that.pcbInstance.init();
+                                        //pcbInstance.activateWidget();
+                                        if (callback) callback();
+                                    });
+                                }
+                            );
+                        }
+                        $(window).trigger('resize');
+                    },
+                    hidePCB: function() {
+                        this.pcbDiv.addClass("hidden");
+                        this.pcbBtn.removeClass("active");
+                        if (this.pcbInstance != null) {
+                            this.pcbInstance.unactivateWidget();
+                        }
+                        $(window).trigger('resize');
+                    },
+                    setupDragDrop: function() {
+                        // subscribe to events
+                        chilipeppr.subscribe("/com-chilipeppr-elem-dragdrop/ondragover", this, this.onDragOver);
+                        chilipeppr.subscribe("/com-chilipeppr-elem-dragdrop/ondragleave", this, this.onDragLeave);
+                        // /com-chilipeppr-elem-dragdrop/ondropped
+                        chilipeppr.subscribe("/com-chilipeppr-elem-dragdrop/ondropped", this, this.onDropped, 8); // default is 10, we do 8 to be higher priority than Eagle BRD
+                    },
+                    supportedFiles: [
+                        {type: 'eagle', ext:".brd", signature: /<!DOCTYPE eagle SYSTEM "eagle.dtd">[\s\S]*<board>/im},
+                        {type: 'kiCad', ext:".kicad_pcb", signature: /\(kicad_pcb \(version \d+\) \(host pcbnew/i}],
+                    onDropped: function(data, info) {
+                        console.log("onDropped. len of file:", data.length, "info:", info);
+                        // we have the data
+                        // double check it's a board file, cuz it could be gcode
+                        var droppedFile = this.supportedFiles.find(function(f){
+                            return f.signature.test(data);
+                        });
+                        if (droppedFile !== undefined) {
+    
+                            console.log("we have a supported board file!");
+                            this.fileInfo = info;
+                            var that = this;
+                            this.showPCB(function() {
+                                console.log("got callback after showing PCB. now opening file.");
+                                that.pcbInstance.open(data, info);
+                            });
+                            console.log("opened brd file");
+
+                            // do NOT store a lastDropped, rather we should
+                            // get told from the workspace what the last file
+                            // was and if it was a BRD file we should auto-open
+                            /*
+                            localStorage.setItem('com-chilipeppr-widget-pcb-lastDropped', data);
+                            localStorage.setItem('com-chilipeppr-widget-pcb-lastDropped-info', JSON.stringify(info));
+                            console.log("saved brd file to localstorage");
+                            */
+                        }
+                        else {
+                            droppedFile = this.supportedFiles.find(function(f){
+                                var extRegEx = new RegExp(f.ext + '$', 'i');
+                                if(info.name.match(extRegEx)) return f; else return null;
+                            });
+                            console.log("droppedFile", droppedFile);
+                            if (droppedFile !== undefined) {
+                                if(droppedFile.type == 'eagle')
+                                    chilipeppr.publish('/com-chilipeppr-elem-flashmsg/flashmsg', "Error Loading Eagle BRD File", "Looks like you dragged in an Eagle BRD file, but it seems to be in binary. You can open this file in Eagle and then re-save it to a new file to create a text version of your Eagle BRD file.", 15 * 1000);
+                                else if (droppedFile.type == 'kiCad')
+                                    chilipeppr.publish('/com-chilipeppr-elem-flashmsg/flashmsg', "Error Loading KiCad File", "Looks like you dragged in a file with kicad_pcb extension, but it seems to be in unsupported format.", 15 * 1000);
+                                return false;
+                            }
+                        }
+                    },
+                    onDragOver: function() {
+                        console.log("onDragOver");
+                        $('#com-chilipeppr-widget-pcb').addClass("panel-primary");
+                        $('#com-chilipeppr-ws-menu .pcb-button').addClass("btn-primary");
+                    },
+                    onDragLeave: function() {
+                        console.log("onDragLeave");
+                        $('#com-chilipeppr-widget-pcb').removeClass("panel-primary");
+                        $('#com-chilipeppr-ws-menu .pcb-button').removeClass("btn-primary");
+                    },
+                }; 
+                
+            }();
+            this.pcbObj.init();
+            console.log("pcbObj:", this.pcbObj);
+            //End PCB Import
 
             // GPIO
             // net-delarre-widget-gpio
@@ -1150,7 +1286,7 @@ cpdefine("inline:com-chilipeppr-workspace-tinyg", ["chilipeppr_ready"], function
             chilipeppr.load(
                 "#com-chilipeppr-3dviewer",
                 //"http://fiddle.jshell.net/chilipeppr/y3HRF/show/light/",
-                "http://raw.githubusercontent.com/chilipeppr/widget-3dviewer/master/auto-generated-widget.html",
+                "http://raw.githubusercontent.com/ameennihad/widget-3dviewer/master/auto-generated-widget.html",
     
                 function() {
                     console.log("got callback done loading 3d");
