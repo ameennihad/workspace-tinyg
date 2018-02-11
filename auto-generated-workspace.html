@@ -981,8 +981,8 @@ cpdefine("inline:com-chilipeppr-workspace-tinyg", ["chilipeppr_ready"], function
                         chilipeppr.subscribe("/com-chilipeppr-elem-dragdrop/ondropped", this, this.onDropped, 8); // default is 10, we do 8 to be higher priority than Eagle BRD
                     },
                     supportedFiles: [
-                        {type: 'eagle', ext:".brd", signature: new RegExp('<!DOCTYPE eagle SYSTEM ' + String.fromCharCode(34) + 'eagle.dtd' + String.fromCharCode(34) + '>[' + String.fromCharCode(92) + 's' + String.fromCharCode(92) + 'S]*<board>', "im")},
-                        
+                        {type: 'eagle', ext:".brd", signature: ""},
+                        {type: 'kiCad', ext:".kicad_pcb", signature: ""}
 					],
                     onDropped: function(data, info) {
                         console.log("onDropped. len of file:", data.length, "info:", info);
