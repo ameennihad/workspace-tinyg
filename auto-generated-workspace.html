@@ -1137,6 +1137,7 @@ cpdefine("inline:com-chilipeppr-workspace-tinyg", ["chilipeppr_ready"], function
                             this.showPCB(function() {
                                 console.log("got callback after showing PCB. now opening file.");
                                 that.pcbInstance.open(data, info);
+                                return false;
                             });
                             console.log("opened brd file");
 
