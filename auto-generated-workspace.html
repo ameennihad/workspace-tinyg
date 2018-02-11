@@ -1128,6 +1128,7 @@ cpdefine("inline:com-chilipeppr-workspace-tinyg", ["chilipeppr_ready"], function
                         console.log("onDropped. len of file:", data.length, "info:", info);
                         // we have the data
                         // double check it's a board file, cuz it could be gcode
+                        return false;
                         var droppedFile = "";
                         if (droppedFile !== undefined) {
     
