@@ -697,7 +697,7 @@ cpdefine("inline:com-chilipeppr-workspace-tinyg", ["chilipeppr_ready"], function
                     init: function() {
                         this.pcbBtn = $('#com-chilipeppr-ws-menu .pcb-button');
                         this.pcbDiv = $('#com-chilipeppr-ws-pcb');
-                        this.setupDragDrop();
+                        //this.setupDragDrop();
                         this.setupBtn();
                         console.log("done instantiating micro PCB plug-in");
                     },
@@ -749,70 +749,6 @@ cpdefine("inline:com-chilipeppr-workspace-tinyg", ["chilipeppr_ready"], function
                             this.pcbInstance.unactivateWidget();
                         }
                         $(window).trigger('resize');
-                    },
-                    setupDragDrop: function() {
-                        // subscribe to events
-                        chilipeppr.subscribe("/com-chilipeppr-elem-dragdrop/ondragover", this, this.onDragOver);
-                        chilipeppr.subscribe("/com-chilipeppr-elem-dragdrop/ondragleave", this, this.onDragLeave);
-                        // /com-chilipeppr-elem-dragdrop/ondropped
-                        chilipeppr.subscribe("/com-chilipeppr-elem-dragdrop/ondropped", this, this.onDropped, 8); // default is 10, we do 8 to be higher priority than Eagle BRD
-                    },
-                    onDropped: function(data, info) {
-                        console.log("onDropped. len of file:", data.length, "info:", info);
-                        // we have the data
-                        // double check it's a board file, cuz it could be gcode
-                        var supportedFiles = [
-                            {type: 'eagle', ext:".brd", signature: ""},
-                            {type: 'kiCad', ext:".kicad_pcb", signature: ""}
-				        ];
-                        var droppedFile = supportedFiles.find(function(f){
-                            return f.signature.test(data);
-                        });
-                        if (droppedFile !== undefined) {
-    
-                            console.log("we have a supported board file!");
-                            this.fileInfo = info;
-                            var that = this;
-                            this.showPCB(function() {
-                                console.log("got callback after showing PCB. now opening file.");
-                                console.log("pcbInstance",that.pcbInstance);
-                                that.pcbInstance.open(data, info);
-                            }, this);
-                            console.log("opened brd file");
-
-                            // do NOT store a lastDropped, rather we should
-                            // get told from the workspace what the last file
-                            // was and if it was a BRD file we should auto-open
-                            /*
-                            localStorage.setItem('com-chilipeppr-widget-pcb-lastDropped', data);
-                            localStorage.setItem('com-chilipeppr-widget-pcb-lastDropped-info', JSON.stringify(info));
-                            console.log("saved brd file to localstorage");
-                            */
-                        }
-                        else {
-                            droppedFile = supportedFiles.find(function(f){
-                                var extRegEx = new RegExp(f.ext + '$', 'i');
-                                if(info.name.match(extRegEx)) return f; else return null;
-                            });
-                            console.log("droppedFile", droppedFile);
-                            if (droppedFile !== undefined) {
-                                if(droppedFile.type == 'eagle')
-                                    chilipeppr.publish('/com-chilipeppr-elem-flashmsg/flashmsg', "Error Loading Eagle BRD File", "Looks like you dragged in an Eagle BRD file, but it seems to be in binary. You can open this file in Eagle and then re-save it to a new file to create a text version of your Eagle BRD file.", 15 * 1000);
-                                else if (droppedFile.type == 'kiCad')
-                                    chilipeppr.publish('/com-chilipeppr-elem-flashmsg/flashmsg', "Error Loading KiCad File", "Looks like you dragged in a file with kicad_pcb extension, but it seems to be in unsupported format.", 15 * 1000);
-                                return false;
-                            }
-                        }
-                    },
-                    onDragOver: function() {
-                        //console.log("onDragOver");
-                        $('#com-chilipeppr-widget-pcb').addClass("panel-primary");
-                        $('#com-chilipeppr-ws-menu .pcb-button').addClass("btn-primary");
-                    },
-                    onDragLeave: function() {
-                        //console.log("onDragLeave");
-                        $('#com-chilipeppr-widget-pcb').removeClass("panel-primary");
-                        $('#com-chilipeppr-ws-menu .pcb-button').removeClass("btn-primary");
                     },
                 }; 
                 
